@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:ui';
 
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/foundation.dart';
@@ -9,7 +8,6 @@ import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:test_sentry/core/functions/functions.dart';
 import 'package:test_sentry/core/presentation/error_screen_page.dart';
 import 'package:test_sentry/env/environment.dart';
-import 'package:test_sentry/main.dart';
 
 Future<void> initializeSentry() async {
   // Get app version info
@@ -29,7 +27,7 @@ Future<void> initializeSentry() async {
       options.dist = packageInfo.buildNumber;
 
       // Privacy & data
-      options.sendDefaultPii = false; // Only enable if you have user consent
+      options.sendDefaultPii = true; // Only enable if you have user consent
 
       // Performance monitoring
       options.tracesSampleRate = environment == 'production' ? 0.1 : 1.0; // Sample less in production
@@ -104,60 +102,23 @@ void Function() runAppWithErrorHandlers() {
         if (kDebugMode) {
           FlutterError.presentError(details);
         } else {
-          // Add custom tags to help with filtering
-          Sentry.configureScope((scope) {
-            scope.setTag('error_type', 'flutter_error');
-            if (details.context != null) {
-              scope.setContexts('flutter_context', {
-                'description': details.context.toString(),
-              });
-            }
-          });
-
-          Sentry.captureException(
-            details.exception,
-            stackTrace: details.stack,
-          );
+          FlutterError.presentError(details);
+          Sentry.captureException(details.exception, stackTrace: details.stack);
         }
       };
 
       // Platform dispatcher error handler
       PlatformDispatcher.instance.onError = (error, stack) {
-        Sentry.configureScope((scope) {
-          scope.setTag('error_type', 'platform_dispatcher');
-        });
-
         Sentry.captureException(error, stackTrace: stack);
         return true;
       };
 
       // Custom error widget
       ErrorWidget.builder = (FlutterErrorDetails details) {
-        if (!kReleaseMode) {
-          // Show more details in development
-          FlutterError.presentError(details);
-          return ErrorWidget(details.exception);
-        }
-
-        // Report error to Sentry
-        Sentry.configureScope((scope) {
-          scope.setTag('error_type', 'error_widget');
-        });
-
-        Sentry.captureException(
-          details.exception,
-          stackTrace: details.stack,
-        );
-
-        // Return a user-friendly error page
+        Sentry.captureException(details.exception, stackTrace: details.stack);
         return const ErrorScreenPage();
       };
-
-      // Add navigation observer for automatic screen tracking
-      final navigatorObserver = SentryNavigatorObserver();
-
-      // Run your app
-      runApp(MyApp(navigatorObserver: navigatorObserver));
+      // Return a user-friendly error page
     }, (error, stackTrace) {
       // This catches errors that aren't caught by other handlers
       Sentry.configureScope((scope) {

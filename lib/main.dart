@@ -7,6 +7,8 @@ import 'package:test_sentry/home/presentation/home_page.dart';
 
 Future<void> main() async {
   await runZonedGuarded(() async {
+    WidgetsFlutterBinding.ensureInitialized();
+    SentryWidgetsFlutterBinding.ensureInitialized();
     // Initialize Sentry first, before any other operations that might throw errors
     await initializeSentry();
 
