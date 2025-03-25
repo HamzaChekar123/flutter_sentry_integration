@@ -1,16 +1,43 @@
-# test_sentry
+# Test Sentry Project
 
-A new Flutter project.
+This project is an implementation of Sentry, an error tracking and performance monitoring tool.
 
-## Getting Started
+## Features
 
-This project is a starting point for a Flutter application.
+- Integration with Sentry for error tracking.
+- Example setup for monitoring application performance.
+- Basic configuration for testing purposes.
 
-A few resources to get you started if this is your first Flutter project:
+## Prerequisites
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+- [Sentry Account](https://sentry.io/)
+- Basic knowledge of Flutter and Dart.
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Installation
+
+1. Clone the repository:
+    ```bash
+    git clone https://github.com/HamzaChekar123/flutter_sentry_integration
+    cd test_sentry
+    ```
+
+2. Install dependencies:
+    ```bash
+    flutter pub get
+    ```
+
+3. Configure Sentry:
+    - Add your Sentry DSN to the configuration file (e.g., `lib/config.dart` or `.env`).
+
+## Usage
+
+Run the application:
+```bash
+flutter run
+```
+
+## Acknowledgments
+
+- [Sentry Documentation](https://docs.sentry.io/)
+- Open-source contributors.
+- Inspiration from similar projects.
