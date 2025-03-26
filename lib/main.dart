@@ -1,51 +1,51 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
-import 'package:test_sentry/core/config/init_config.dart';
-import 'package:test_sentry/home/presentation/home_page.dart';
+import 'package:test_sentry/core/application/error_handler.dart';
+import 'package:test_sentry/core/presentation/app_widget.dart';
+
+import 'package:test_sentry/core/shared/providers.dart';
 
 Future<void> main() async {
   await runZonedGuarded(() async {
     WidgetsFlutterBinding.ensureInitialized();
-    SentryWidgetsFlutterBinding.ensureInitialized();
-    // Initialize Sentry first, before any other operations that might throw errors
-    await initializeSentry();
+    //* Create a future provider container to load async dependencies
+    final container = ProviderContainer();
 
-    // Create a Sentry navigation observer for screen tracking
-    final sentryNavigatorObserver = SentryNavigatorObserver();
+    //* Initialize Sentry first to capture any errors during startup
+    final sentryConfig = await container.read(sentryConfigProvider.future);
+    final errorLogger = container.read(errorLoggerProvider);
+    final errorReporter = container.read(errorReporterProvider);
 
+    //* Initialize error reporter
+    await errorReporter.initialize();
+
+    //* Create the final container with observers
+    final appContainer = ProviderContainer(
+      observers: [
+        ErrorHandler(errorLogger),
+      ],
+      //* Keep the initialized providers
+      overrides: [
+        sentryConfigProvider.overrideWith((ref) async => sentryConfig),
+      ],
+    );
+
+    //* Run the app within the provider scope
     runApp(
-      MyApp(navigatorObserver: sentryNavigatorObserver),
+      UncontrolledProviderScope(
+        container: appContainer,
+        child: const AppWidget(),
+      ),
     );
   }, (error, stackTrace) {
-    // This is your final fallback for errors that aren't caught elsewhere
+    //* This is the last resort error handler
     Sentry.captureException(
       error,
       stackTrace: stackTrace,
-      hint: Hint.withMap({'error_type': 'uncaught_error'}),
+      hint: Hint.withMap({'source': 'uncaught_zone_error'}),
     );
   });
-}
-
-// Add this to your MyApp widget
-class MyApp extends StatelessWidget {
-  final SentryNavigatorObserver navigatorObserver;
-
-  const MyApp({super.key, required this.navigatorObserver});
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      // Add Sentry navigation observer
-      navigatorObservers: [navigatorObserver],
-      // Rest of your app configuration
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
-      ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
-    );
-  }
 }

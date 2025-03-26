@@ -22,8 +22,8 @@ class _MyHomePageState extends State<MyHomePage> {
         title: Text(widget.title),
       ),
       body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
+        //* Center is a layout widget. It takes a single child and positions it
+        //* in the middle of the parent.
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
@@ -53,15 +53,9 @@ class _MyHomePageState extends State<MyHomePage> {
               child: Text("Test Platform Error"),
             ),
             const SizedBox(height: 20),
-            // ElevatedButton(
-            //   onPressed: () {
-            //     throw Exception('This is test exception from Sentry');
-            //   },
-            //   child: const Text('Verify Sentry Setup'),
-            // )
           ],
         ),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
+      ),
     );
   }
 }

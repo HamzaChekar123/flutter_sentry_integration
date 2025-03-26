@@ -32,6 +32,8 @@ migrate_working_dir/
 /build/
 android/app/.cxx/
 
+*.g.dart
+
 .env.dev
 .env.prod
 
