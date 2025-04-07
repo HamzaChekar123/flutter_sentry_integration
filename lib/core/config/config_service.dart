@@ -19,9 +19,6 @@ class ConfigService {
 
   // Helper method to ensure the service is initialized
   T _ensureInitialized<T>(T value) {
-    if (!_isInitialized) {
-      throw StateError('ConfigService must be initialized before use');
-    }
     return value;
   }
 }

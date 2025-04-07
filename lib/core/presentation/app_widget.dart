@@ -10,15 +10,15 @@ class AppWidget extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     // Access the error reporter for navigation breadcrumbs
-    final errorReporter = ref.read(errorReporterUseCaseProvider);
+    //final errorReporter = ref.read(errorReporterUseCaseProvider);
 
-    return MaterialApp(
+    return const MaterialApp(
       title: 'Flutter DDD App',
       navigatorObservers: [
         // Custom navigator observer to track screen views
-        AppRouteObserver(errorReporter),
+        //  AppRouteObserver(errorReporter),
       ],
-      home: const MyHomePage(
+      home: MyHomePage(
         title: "Sentry Flutter Demo",
       ),
     );
